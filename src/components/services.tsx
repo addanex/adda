@@ -36,49 +36,49 @@ const services = [
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 4,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 5,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 6,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 7,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 8,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 9,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
     image: "/images/services/software-testing.png",
   },
   {
-    id: 3,
+    id: 10,
     title: "Software Testing & QA",
     description:
       "We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality. We can help you to test your software and ensure that it is of the highest quality.",
@@ -86,7 +86,7 @@ const services = [
   },
 ];
 
-export default function ServicesDisplay() {
+export default function Services() {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
@@ -139,11 +139,11 @@ export default function ServicesDisplay() {
                   className={cn(
                     "flex flex-col gap-4 rounded-xl border bg-white p-6 h-full transition-all",
                     isActive
-                      ? "border-pink-400 shadow-lg"
+                      ? "border-primary shadow-lg"
                       : "border-transparent",
                   )}
                 >
-                  <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-purple-200 flex items-center justify-center">
+                  <div className="relative h-14 w-14 rounded-full overflow-hidden border-2 border-primary/30 flex items-center justify-center">
                     <Image
                       src={item.image}
                       alt={item.title}
@@ -154,7 +154,7 @@ export default function ServicesDisplay() {
                   <h3
                     className={cn(
                       "font-semibold text-lg",
-                      isActive ? "text-pink-600" : "text-gray-900",
+                      isActive ? "text-primary" : "text-gray-900",
                     )}
                   >
                     {item.title}
@@ -178,7 +178,7 @@ export default function ServicesDisplay() {
               onClick={() => api?.scrollTo(index)}
               className={cn(
                 "h-2.5 w-2.5 rounded-full transition-colors cursor-pointer",
-                index === current ? "bg-pink-500" : "bg-gray-300",
+                index === current ? "bg-primary" : "bg-gray-300",
               )}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -187,9 +187,9 @@ export default function ServicesDisplay() {
 
         <div className="flex items-center gap-3 text-sm font-medium text-gray-800 ml-auto">
           <span>{String(current + 1).padStart(2, "0")}</span>
-          <div className="relative w-24 h-[2px] bg-gray-200">
+          <div className="relative w-24 h-0.5 bg-gray-200">
             <div
-              className="absolute left-0 top-0 h-[2px] bg-pink-500 transition-all"
+              className="absolute left-0 top-0 h-0.5 bg-primary transition-all"
               style={{
                 width: `${count > 0 ? ((current + 1) / count) * 100 : 0}%`,
               }}
