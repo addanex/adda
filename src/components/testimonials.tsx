@@ -12,6 +12,8 @@ import {
 } from "@/features/common/shadcn/carousel";
 
 import { cn } from "cn";
+import Wrapper from "./wrapper";
+import Autoplay from "embla-carousel-autoplay";
 
 type Testimonial = {
   name: string;
@@ -68,13 +70,22 @@ const testimonials: Testimonial[] = [
 export default function Testimonials() {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
+  const [count, setCount] = React.useState(0);
+
+  const autoplay = React.useRef(
+    Autoplay({ delay: 2000, stopOnInteraction: false }),
+  );
 
   React.useEffect(() => {
     if (!api) return;
 
-    const syncState = () => setCurrent(api.selectedScrollSnap());
+    const syncState = () => {
+      setCount(api.scrollSnapList().length);
+      setCurrent(api.selectedScrollSnap());
+    };
 
     syncState();
+
     api.on("select", syncState);
     api.on("reInit", syncState);
 
@@ -84,118 +95,135 @@ export default function Testimonials() {
     };
   }, [api]);
 
-  const active = testimonials[current];
-
   return (
-    <div className="w-full flex flex-col items-center py-16 px-4">
-      {/* Header */}
-      <h2 className="text-3xl text-gray-800 text-center leading-tight">
-        Why customers love
-        <br />
-        <span className="font-bold text-gray-900">working with us</span>
-      </h2>
-
-      {/* Quote row with nav arrows */}
-      <div className="w-full max-w-400 flex items-center gap-4 mt-10">
-        <button
-          type="button"
-          onClick={() => api?.scrollPrev()}
-          aria-label="Previous testimonial"
-          className="shrink-0 flex items-center justify-center h-11 w-11 rounded-full border border-primary text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-
-        <p className="flex-1 text-center text-gray-500 leading-relaxed min-h-24">
-          {active.quote}
+    <Wrapper className="flex flex-col gap-6 border">
+      <div className="flex flex-col gap-2 items-center max-w-3xl mx-auto text-center">
+        <h1 className="text-3xl font-bold">Testimonials</h1>
+        <p className="text-muted-foreground">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minima
+          magnam delectus dolorem ipsa corrupti inventore eum fugit rem unde
+          eius iure?
         </p>
-
-        <button
-          type="button"
-          onClick={() => api?.scrollNext()}
-          aria-label="Next testimonial"
-          className="shrink-0 flex items-center justify-center h-11 w-11 rounded-full border border-primary text-primary hover:bg-primary/10 transition-colors cursor-pointer"
-        >
-          <ArrowRight className="h-4 w-4" />
-        </button>
       </div>
 
-      {/* Avatar selector row */}
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "center",
-          loop: true,
-        }}
-        className="w-full max-w-4xl mt-12"
-      >
-        <CarouselContent className="-ml-4">
-          {testimonials.map((person, index) => {
-            const isActive = index === current;
-            return (
-              <CarouselItem
-                key={index}
-                className="pl-4 basis-1/3 md:basis-1/5"
-              >
-                <button
-                  type="button"
-                  onClick={() => api?.scrollTo(index)}
-                  className="w-full flex flex-col items-center gap-3 cursor-pointer"
+      <div className="flex flex-col gap-4">
+        {/* Counter — top right */}
+        <div className="flex justify-end text-sm font-medium text-gray-800">
+          <span>{String(current + 1).padStart(2, "0")}</span>
+          <span className="mx-1 text-gray-400">/</span>
+          <span>{String(count).padStart(2, "0")}</span>
+        </div>
+
+        {/* Carousel */}
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            slidesToScroll: 1,
+          }}
+          plugins={[autoplay.current]}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {testimonials.map((item, index) => {
+              const isActive = index === current;
+              return (
+                <CarouselItem
+                  key={index}
+                  className="pl-4 basis-full md:basis-1/2 lg:basis-1/3"
                 >
                   <div
                     className={cn(
-                      "relative h-16 w-16 rounded-full overflow-hidden transition-all",
+                      "flex flex-col gap-4 rounded-xl border bg-white p-6 h-full transition-all",
                       isActive
-                        ? "ring-2 ring-primary ring-offset-2"
-                        : "opacity-70",
+                        ? "border-primary shadow-lg"
+                        : "border-transparent",
                     )}
                   >
-                    <Image
-                      src={person.avatar}
-                      alt={person.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+                    {/* Stars */}
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: item.rating }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                        />
+                      ))}
+                    </div>
 
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, starIndex) => (
-                      <Star
-                        key={starIndex}
-                        className={cn(
-                          "h-3.5 w-3.5",
-                          starIndex < person.rating
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "fill-gray-200 text-gray-200",
-                        )}
-                      />
-                    ))}
-                  </div>
+                    {/* Quote */}
+                    <p className="text-sm text-gray-600 leading-relaxed flex-1">
+                      &ldquo;{item.quote}&rdquo;
+                    </p>
 
-                  <div className="text-center">
-                    <p
-                      className={cn(
-                        "text-sm font-medium",
-                        isActive ? "text-primary" : "text-gray-400",
-                      )}
-                    >
-                      {person.name}
-                    </p>
-                    <p
-                      className={cn(
-                        "text-xs",
-                        isActive ? "text-gray-700" : "text-gray-300",
-                      )}
-                    >
-                      {person.role}
-                    </p>
+                    {/* Author */}
+                    <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
+                      <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-primary/30 flex-shrink-0">
+                        <Image
+                          src={item.avatar}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div>
+                        <p
+                          className={cn(
+                            "font-semibold text-sm",
+                            isActive ? "text-primary" : "text-gray-900",
+                          )}
+                        >
+                          {item.name}
+                        </p>
+                        <p className="text-xs text-gray-500">{item.role}</p>
+                      </div>
+                    </div>
                   </div>
-                </button>
-              </CarouselItem>
-            );
-          })}
-        </CarouselContent>
-      </Carousel>
-    </div>
+                </CarouselItem>
+              );
+            })}
+          </CarouselContent>
+        </Carousel>
+
+        {/* Bottom controls: ← dots → centered */}
+        <div className="flex items-center justify-center gap-4">
+          <button
+            onClick={() => {
+              autoplay.current.stop();
+              api?.scrollPrev();
+            }}
+            className="flex items-center justify-center h-9 w-9 rounded-full border border-gray-300 hover:border-primary hover:text-primary transition-colors cursor-pointer"
+            aria-label="Previous"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+
+          <div className="flex gap-2">
+            {Array.from({ length: count }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => api?.scrollTo(index)}
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full transition-colors cursor-pointer",
+                  index === current ? "bg-primary" : "bg-gray-300",
+                )}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={() => {
+              autoplay.current.stop();
+              api?.scrollNext();
+            }}
+            className="flex items-center justify-center h-9 w-9 rounded-full border border-gray-300 hover:border-primary hover:text-primary transition-colors cursor-pointer"
+            aria-label="Next"
+          >
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </Wrapper>
   );
 }
+
