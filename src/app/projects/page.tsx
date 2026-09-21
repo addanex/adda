@@ -1,3 +1,5 @@
+import Wrapper from "@/src/components/wrapper";
+
 export default function ProjectsPage() {
-  return <div>Projects</div>;
+  return <Wrapper className="flex-1">Projects</Wrapper>;
 }

@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/features/common/shadcn/button";
 import Wrapper from "./wrapper";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 
 const NAV_ITEM_WIDTH = "w-32";
@@ -23,6 +23,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+  { id: "about-us", name: "About Us", type: "link" },
   {
     id: "services",
     name: "Services",
@@ -35,7 +36,7 @@ const navItems: NavItem[] = [
   },
   { id: "projects", name: "Projects", type: "link" },
   {
-    id: "career",
+    id: "careers",
     name: "Careers",
     type: "drop-down",
     dropdownItems: [
@@ -44,7 +45,6 @@ const navItems: NavItem[] = [
       { id: "benefits", name: "Benefits" },
     ],
   },
-  { id: "testimonials", name: "Testimonials", type: "link" },
 ];
 
 function scrollToSection(id: string) {
@@ -55,6 +55,7 @@ function scrollToSection(id: string) {
 }
 
 export default function Navbar() {
+  const pathname = usePathname();
   const router = useRouter();
 
   return (
@@ -69,12 +70,19 @@ export default function Navbar() {
                   <Button
                     variant="link"
                     className="w-full text-gray-700 hover:text-gray-900 cursor-pointer"
-                    onClick={() => scrollToSection(item.id)}
+                    onClick={() => {
+                      if (item.id === "projects" && pathname === "/") {
+                        scrollToSection(item.id);
+                      } else {
+                        router.push(`/${item.id}`);
+                      }
+                    }}
                   >
                     {item.name}
                   </Button>
                 ) : (
                   <NavDropdown
+                    id={item.id}
                     label={item.name}
                     items={item.dropdownItems ?? []}
                     onSelect={(id) => scrollToSection(id)}
@@ -96,14 +104,17 @@ export default function Navbar() {
 }
 
 function NavDropdown({
+  id,
   label,
   items,
   onSelect,
 }: {
+  id: string;
   label: string;
   items: NavDropdownItem[];
   onSelect: (id: string) => void;
 }) {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -159,6 +170,7 @@ function NavDropdown({
               onClick={() => {
                 onSelect(menuItem.id);
                 setOpen(false);
+                router.push(`/${id}/${menuItem.id}`);
               }}
               className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
             >
